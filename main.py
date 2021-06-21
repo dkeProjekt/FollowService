@@ -2,6 +2,8 @@ from py2neo import Graph, Node, Relationship, NodeMatcher
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from py2neo.client import json
+from pymongo import MongoClient
+import json as js
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -63,6 +65,21 @@ def getfollowed():
     return jsonify(t)
 
 
+@app.route('/get_all_users', methods=['GET'])
+def get_all_users():
+    client = MongoClient(
+        "mongodb+srv://Adri25:adri1234@cluster0.taxsc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    database = client['PRDKE']
+    collection = database['UserData']
+    users = collection.find()
+    user_names = []
+    for user in users:
+        user_names.append(user["name"])
+
+    user_names_json = js.dumps(user_names)
+    return jsonify({'get_all_users_successful': True, "list_of_users": user_names_json})
+
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5005)
 
