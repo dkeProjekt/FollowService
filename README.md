@@ -1,53 +1,53 @@
 # FollowService
 
-###SET-UP
+### SET-UP
 
-####1) Aufruf in der Konsole:
+#### 1) Aufruf in der Konsole:
 
 `docker run --publish=7474:7474 --publish=7687:7687 -e 'NEO4J_AUTH=neo4j/secret' neo4j:4.2.4`
 
-####2) Docker Desktop öffnen und neo4j Datenbank im Browser öffnen -> Passwort auf "secret" ändern
+#### 2) Docker Desktop öffnen und neo4j Datenbank im Browser öffnen -> Passwort auf "secret" ändern
 
 
-###REST-CALLS
+### REST-CALLS
 
-####1) User anlegen
+#### 1) User anlegen
 
 `localhost:5005/create`
 
-######Request: 
+###### Request: 
 
 `{
 "name" : "Benjamin"
 }`
 
-####2) User folgen
+#### 2) User folgen
 
 `localhost:5005/follow`
 
-######Request:
+###### Request:
 
 `{
 "name" : "Benjamin",
 "followName": "Florian"
 }`
 
-####3) User nicht mehr folgen
+#### 3) User nicht mehr folgen
 
 `localhost:5005/unfollow`
 
-######Request:
+###### Request:
 
 `{
 "name" : "Benjamin",
 "unfollowName": "Florian"
 }`
 
-####4) User folgt diesen Personen
+#### 4) User folgt diesen Personen
 
 `localhost:5005/getfollowed`
 
-######Response:
+###### Response:
 
 `[
     {
