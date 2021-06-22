@@ -17,6 +17,7 @@ except Exception as e:
     raise SystemExit(e)
 
 
+# Wird bei Registrierung aufgerufen und legt User in Neo4j an
 @app.route('/create', methods=['POST'])
 def create():
     if not request.json:
@@ -28,6 +29,7 @@ def create():
     return jsonify({'created': True, 'name': name})
 
 
+# Fügt eine Relationship hinzu, Nutzer kann sich nicht selbst folgen
 @app.route('/follow', methods=['POST'])
 def follow():
     if not request.json:
@@ -35,12 +37,16 @@ def follow():
     name = request.json.get("name")
     followName = request.json.get("followName")
 
-    graph.run("MATCH (a:Person {name: $name}),(b:Person {name: $followName})MERGE (a)-[r:FOLLOWS]->(b)", name=name,
-              followName=followName).data()
+    if name == followName:
+        return jsonify({'follows': False})
+    else:
+        graph.run("MATCH (a:Person {name: $name}),(b:Person {name: $followName})MERGE (a)-[r:FOLLOWS]->(b)", name=name,
+                  followName=followName).data()
 
     return jsonify({'follows': True})
 
 
+# Relationship zwischen zwei Usern wird entfernt
 @app.route('/unfollow', methods=['POST'])
 def unfollow():
     if not request.json:
@@ -48,12 +54,15 @@ def unfollow():
     name = request.json.get("name")
     unfollowName = request.json.get("unfollowName")
 
-    graph.run("MATCH(a:Person {name:$name})-[r:FOLLOWS]->(b:Person {name:$unfollowName}) DELETE r", name=name,
-              unfollowName=unfollowName).data()
+    if name == unfollowName:
+        return jsonify({'unfollow': False})
+    else:
+        graph.run("MATCH(a:Person {name:$name})-[r:FOLLOWS]->(b:Person {name:$unfollowName}) DELETE r", name=name,
+                  unfollowName=unfollowName).data()
 
     return jsonify({'unfollow': True})
 
-
+# Liefert eine Liste mit Personen denen der User folgt
 @app.route('/getfollowed', methods=['GET'])
 def getfollowed():
     if not request.json:
@@ -82,4 +91,3 @@ def get_all_users():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
-
