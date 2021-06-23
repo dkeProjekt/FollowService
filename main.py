@@ -69,7 +69,7 @@ def getfollowed():
         abort(400)
     name = request.json.get("name")
 
-    t = graph.run("MATCH(a: Person{name: $name})-[r: FOLLOWS]->(FOLGT)RETURN FOLGT", name=name).data()
+    t = graph.run("MATCH(a: Person{name: $name})-[r: FOLLOWS]->(FOLGT)RETURN FOLGT.name", name=name).data()
 
     return jsonify(t)
 
