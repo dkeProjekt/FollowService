@@ -1,9 +1,9 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
-from py2neo.client import json
+#from py2neo.client import json
 from pymongo import MongoClient
-import json as js
+import json
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -63,30 +63,20 @@ def unfollow():
     return jsonify({'unfollow': True})
 
 # Liefert eine Liste mit Personen denen der User folgt
-@app.route('/getfollowed', methods=['GET'])
+@app.route('/getfollowed/', methods=['GET'])
 def getfollowed():
-    if not request.json:
-        abort(400)
-    name = request.json.get("name")
+    #if not request.json:
+    #    abort(400)
+    #name = request.json.get("name")
+    name = request.args.get('name')
 
-    t = graph.run("MATCH(a: Person{name: $name})-[r: FOLLOWS]->(FOLGT)RETURN FOLGT.name", name=name).data()
+    followers = graph.run("MATCH(a: Person{name: $name})-[r: FOLLOWS]->(FOLGT)RETURN FOLGT.name", name=name).data()
+    follower_names = []
+    for follower in followers:
+        follower_names.append(follower['FOLGT.name'])
 
-    return jsonify(t)
-
-
-@app.route('/get_all_users', methods=['GET'])
-def get_all_users():
-    client = MongoClient(
-        "mongodb+srv://Adri25:adri1234@cluster0.taxsc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
-    database = client['PRDKE']
-    collection = database['UserData']
-    users = collection.find()
-    user_names = []
-    for user in users:
-        user_names.append(user["name"])
-
-    user_names_json = js.dumps(user_names)
-    return jsonify({'get_all_users_successful': True, "list_of_users": user_names_json})
+    follower_names_json = json.dumps(follower_names)
+    return jsonify({'get_all_users_following_successful': True, "list_of_users_following": follower_names_json})
 
 
 if __name__ == '__main__':
