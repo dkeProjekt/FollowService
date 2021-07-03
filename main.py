@@ -1,8 +1,6 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
-#from py2neo.client import json
-from pymongo import MongoClient
 import json
 
 app = Flask(__name__)
@@ -62,14 +60,11 @@ def unfollow():
 
     return jsonify({'unfollow': True})
 
+
 # Liefert eine Liste mit Personen denen der User folgt
 @app.route('/getfollowed/', methods=['GET'])
 def getfollowed():
-    #if not request.json:
-    #    abort(400)
-    #name = request.json.get("name")
     name = request.args.get('name')
-
     followers = graph.run("MATCH(a: Person{name: $name})-[r: FOLLOWS]->(FOLGT)RETURN FOLGT.name", name=name).data()
     follower_names = []
     for follower in followers:
