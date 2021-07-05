@@ -49,15 +49,7 @@
 
 ###### Response:
 
-`[
-    {
-        "FOLGT": {
-            "name": "Toni"
-        }
-    },
-    {
-        "FOLGT": {
-            "name": "Lena"
-        }
-    }
-]`
+`{
+	"get_all_users_following_successful": "True",
+	"list_of_users_following": ["Elton", "Anna", "Tony"]
+}`
